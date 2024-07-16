@@ -355,7 +355,7 @@ def user_exists(user_id):
 
 def init_user_lang(user_id):
     user_dict[user_id] = {
-        user_translate_language_key: "Japanese",
+        user_translate_language_key: "English",
         user_audio_language_key: "Traditional Chinese",
     }
 
