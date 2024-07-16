@@ -3,18 +3,17 @@ import hashlib
 
 from dotenv import load_dotenv
 from flask import Flask, request, abort
-from linebot import LineBotApi, WebhookHandler
-from linebot.exceptions import InvalidSignatureError
-from linebot.models import (
-    MessageEvent,
+from linebot.v3 import WebhookHandler
+from linebot.v3.exceptions import InvalidSignatureError
+from linebot.v3.messaging import (
+    Configuration,
+    ApiClient,
+    MessagingApi,
+    MessagingApiBlob,
+    ReplyMessageRequest,
     TextMessage,
-    AudioMessage,
-    TextSendMessage,
-    AudioSendMessage,
-    QuickReply,
-    QuickReplyButton,
-    MessageAction,
 )
+from linebot.v3.webhooks import MessageEvent, TextMessageContent, AudioMessageContent
 from gtts import gTTS
 from api.ai.chatgpt import ChatGPT
 from api.config.configs import *
@@ -32,7 +31,7 @@ elif environment == Environment.PRODUCTION:
 elif environment == Environment.VERCEL:
     app.config.from_object(ProductionForVercelConfig)
 
-line_bot_api = LineBotApi(os.getenv("LINE_CHANNEL_ACCESS_TOKEN"))
+configuration = Configuration(access_token=os.getenv("LINE_CHANNEL_ACCESS_TOKEN"))
 line_handler = WebhookHandler(os.getenv("LINE_CHANNEL_SECRET"))
 
 push_translated_text_audio_enabled = (
@@ -106,7 +105,7 @@ def callback():
     return "OK"
 
 
-@line_handler.add(MessageEvent, message=TextMessage)
+@line_handler.add(MessageEvent, message=TextMessageContent)
 def handle_text_message(event):
     user_id = event.source.user_id
     if not (user_exists(user_id)):
@@ -185,7 +184,7 @@ def handle_text_message(event):
                 ]
             ),
         )
-        line_bot_api.reply_message(event.reply_token, flex_message)
+        configuration.reply_message(event.reply_token, flex_message)
 
     elif "設定辨識翻譯" in user_input:
         # Set audio language by user
@@ -264,7 +263,7 @@ def handle_text_message(event):
                 ]
             ),
         )
-        line_bot_api.reply_message(event.reply_token, flex_message)
+        configuration.reply_message(event.reply_token, flex_message)
 
     elif "設定打字翻譯" in user_input:
         # Set translate language by user
@@ -277,7 +276,7 @@ def handle_text_message(event):
         response_text = f"""設定完畢！
 我方語言：{reverse_lang_dict[audio_language]}（{audio_language}）
 對方語言：{reverse_lang_dict[translate_language]}（{translate_language}）"""
-        line_bot_api.reply_message(
+        configuration.reply_message(
             event.reply_token, TextSendMessage(text=response_text)
         )
 
@@ -287,7 +286,7 @@ def handle_text_message(event):
         translate_language = user_dict[user_id][user_translate_language_key]
         response_text = f"""我方語言：{reverse_lang_dict[audio_language]}（{audio_language}）
 對方語言：{reverse_lang_dict[translate_language]}（{translate_language}）"""
-        line_bot_api.reply_message(
+        configuration.reply_message(
             event.reply_token, TextSendMessage(text=response_text)
         )
 
@@ -296,7 +295,7 @@ def handle_text_message(event):
         translated_text = chatgpt.translate(
             user_input, user_dict[user_id][user_translate_language_key]
         )
-        line_bot_api.reply_message(
+        configuration.reply_message(
             event.reply_token, TextSendMessage(text=translated_text)
         )
         if push_translated_text_audio_enabled:
@@ -318,7 +317,7 @@ def handle_text_message(event):
             translated_text_audio_duration = (
                 get_audio_duration(translated_text_audio_path) * 1000
             )
-            line_bot_api.push_message(
+            configuration.push_message(
                 user_id,
                 AudioSendMessage(
                     original_content_url=translated_text_audio_url,
@@ -327,18 +326,13 @@ def handle_text_message(event):
             )
 
 
-@line_handler.add(MessageEvent, message=AudioMessage)
+@line_handler.add(MessageEvent, message=AudioMessageContent)
 def handle_audio_message(event):
     user_id = event.source.user_id
     if not (user_exists(user_id)):
         init_user_lang(user_id)
     # Read voice message for whisper api input
-    message_id = event.message.id
-    user_audio_path = os.path.join(
-        app.config.get("AUDIO_TEMP_PATH"), f"{message_id}.m4a"
-    )
-    with open(user_audio_path, "wb") as f:
-        f.write(line_bot_api.get_message_content(message_id).content)
+    user_audio_path = write_user_audio(event.message.id)
     whispered_text = chatgpt.whisper(user_audio_path)
     if os.path.exists(user_audio_path):
         os.remove(user_audio_path)
@@ -346,7 +340,7 @@ def handle_audio_message(event):
     translated_text = chatgpt.translate(
         whispered_text, user_dict[user_id][user_audio_language_key]
     )
-    line_bot_api.reply_message(event.reply_token, TextSendMessage(text=translated_text))
+    reply_message(event.reply_token, translated_text)
 
 
 def user_exists(user_id):
@@ -383,6 +377,27 @@ def get_audio_url(user_id, audio_path):
 
 def get_audio_duration(audio_path):
     return ffmpeg.probe(audio_path)["format"]["duration"]
+
+
+def write_user_audio(message_id):
+    user_audio_path = os.path.join(
+        app.config.get("AUDIO_TEMP_PATH"), f"{message_id}.m4a"
+    )
+    with ApiClient(configuration) as api_client:
+        line_bot_blob_api = MessagingApiBlob(api_client)
+        with open(user_audio_path, "wb") as audio_file:
+            audio_file.write(line_bot_blob_api.get_message_content(message_id))
+    return user_audio_path
+
+
+def reply_message(reply_token, message):
+    with ApiClient(configuration) as api_client:
+        line_bot_api = MessagingApi(api_client)
+        line_bot_api.reply_message_with_http_info(
+            ReplyMessageRequest(
+                reply_token=reply_token, messages=[TextMessage(text=message)]
+            )
+        )
 
 
 if __name__ == "__main__":
