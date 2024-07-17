@@ -58,10 +58,10 @@ lang_dict = {
     "韓文": "Korean",
     "越南文": "Vietnamese",
     "泰文": "Thai",
+    "印尼文": "Indonesian",
     "義大利文": "Italian",
     "西班牙文": "Spanish",
     "葡萄牙文": "Portuguese",
-    "荷蘭文": "Dutch",
     "德文": "German",
     "法文": "French",
 }
@@ -75,10 +75,10 @@ ietf_lang_dict = {
     "Korean": "ko",
     "Vietnamese": "vi",
     "Thai": "th",
+    "Indonesian": "id",
     "Italian": "it",
     "Spanish": "es",
     "Portuguese": "pt",
-    "Dutch": "nl",
     "German": "de",
     "French": "fr",
 }
@@ -159,6 +159,11 @@ def handle_text_message(event):
                     ),
                     QuickReplyItem(
                         action=MessageAction(
+                            label="印尼文", text="設定語音辨識後翻譯為 " + "印尼文"
+                        )
+                    ),
+                    QuickReplyItem(
+                        action=MessageAction(
                             label="義大利文", text="設定語音辨識後翻譯為 " + "義大利文"
                         )
                     ),
@@ -170,11 +175,6 @@ def handle_text_message(event):
                     QuickReplyItem(
                         action=MessageAction(
                             label="葡萄牙文", text="設定語音辨識後翻譯為 " + "葡萄牙文"
-                        )
-                    ),
-                    QuickReplyItem(
-                        action=MessageAction(
-                            label="荷蘭文", text="設定語音辨識後翻譯為 " + "荷蘭文"
                         )
                     ),
                     QuickReplyItem(
@@ -238,6 +238,11 @@ def handle_text_message(event):
                     ),
                     QuickReplyItem(
                         action=MessageAction(
+                            label="印尼文", text="設定打字後翻譯為 " + "印尼文"
+                        )
+                    ),
+                    QuickReplyItem(
+                        action=MessageAction(
                             label="義大利文", text="設定打字後翻譯為 " + "義大利文"
                         )
                     ),
@@ -249,11 +254,6 @@ def handle_text_message(event):
                     QuickReplyItem(
                         action=MessageAction(
                             label="葡萄牙文", text="設定打字後翻譯為 " + "葡萄牙文"
-                        )
-                    ),
-                    QuickReplyItem(
-                        action=MessageAction(
-                            label="荷蘭文", text="設定打字後翻譯為 " + "荷蘭文"
                         )
                     ),
                     QuickReplyItem(
