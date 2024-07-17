@@ -1,7 +1,7 @@
 # gpt-ai-translator
 
-使用 Flask、OpenAI whisper API、GPT3.5 API 來開發語言翻譯 Line 機器人。  
-Using Flask, OpenAI whisper API, GPT3.5 API to develop line language translator.
+使用 Flask、OpenAI whisper API、GPT4o API 來開發語言翻譯 Line 機器人。  
+Using Flask, OpenAI whisper API, GPT4o API to develop line language translator.
 
 ## 使用案例
 
