@@ -119,72 +119,72 @@ def handle_text_message(event):
     user_input = event.message.text
     if (user_input == "/setting") or (user_input == "設定"):
         flex_message = TextMessage(
-            text="請選擇語音辨識後的翻譯語言（我方語言）",
+            text="請選擇我方使用語言",
             quick_reply=QuickReply(
                 items=[
                     QuickReplyItem(
                         action=MessageAction(
-                            label="繁體中文", text="設定辨識翻譯 " + "繁體中文"
+                            label="繁體中文", text="設定語音辨識後翻譯為 " + "繁體中文"
                         )
                     ),
                     QuickReplyItem(
                         action=MessageAction(
-                            label="簡體中文", text="設定辨識翻譯 " + "簡體中文"
+                            label="簡體中文", text="設定語音辨識後翻譯為 " + "簡體中文"
                         )
                     ),
                     QuickReplyItem(
                         action=MessageAction(
-                            label="英文", text="設定辨識翻譯 " + "英文"
+                            label="英文", text="設定語音辨識後翻譯為 " + "英文"
                         )
                     ),
                     QuickReplyItem(
                         action=MessageAction(
-                            label="日文", text="設定辨識翻譯 " + "日文"
+                            label="日文", text="設定語音辨識後翻譯為 " + "日文"
                         )
                     ),
                     QuickReplyItem(
                         action=MessageAction(
-                            label="韓文", text="設定辨識翻譯 " + "韓文"
+                            label="韓文", text="設定語音辨識後翻譯為 " + "韓文"
                         )
                     ),
                     QuickReplyItem(
                         action=MessageAction(
-                            label="越南文", text="設定辨識翻譯 " + "越南文"
+                            label="越南文", text="設定語音辨識後翻譯為 " + "越南文"
                         )
                     ),
                     QuickReplyItem(
                         action=MessageAction(
-                            label="泰文", text="設定辨識翻譯 " + "泰文"
+                            label="泰文", text="設定語音辨識後翻譯為 " + "泰文"
                         )
                     ),
                     QuickReplyItem(
                         action=MessageAction(
-                            label="義大利文", text="設定辨識翻譯 " + "義大利文"
+                            label="義大利文", text="設定語音辨識後翻譯為 " + "義大利文"
                         )
                     ),
                     QuickReplyItem(
                         action=MessageAction(
-                            label="西班牙文", text="設定辨識翻譯 " + "西班牙文"
+                            label="西班牙文", text="設定語音辨識後翻譯為 " + "西班牙文"
                         )
                     ),
                     QuickReplyItem(
                         action=MessageAction(
-                            label="葡萄牙文", text="設定辨識翻譯 " + "葡萄牙文"
+                            label="葡萄牙文", text="設定語音辨識後翻譯為 " + "葡萄牙文"
                         )
                     ),
                     QuickReplyItem(
                         action=MessageAction(
-                            label="荷蘭文", text="設定辨識翻譯 " + "荷蘭文"
+                            label="荷蘭文", text="設定語音辨識後翻譯為 " + "荷蘭文"
                         )
                     ),
                     QuickReplyItem(
                         action=MessageAction(
-                            label="德文", text="設定辨識翻譯 " + "德文"
+                            label="德文", text="設定語音辨識後翻譯為 " + "德文"
                         )
                     ),
                     QuickReplyItem(
                         action=MessageAction(
-                            label="法文", text="設定辨識翻譯 " + "法文"
+                            label="法文", text="設定語音辨識後翻譯為 " + "法文"
                         )
                     ),
                 ]
@@ -192,78 +192,78 @@ def handle_text_message(event):
         )
         reply_message(event.reply_token, flex_message)
 
-    elif "設定辨識翻譯" in user_input:
+    elif "設定語音辨識後翻譯為" in user_input:
         # Set audio language by user
         user_dict[user_id][user_audio_language_key] = lang_dict[
             user_input.split(" ")[1]
         ]
         flex_message = TextMessage(
-            text="請選擇打字後的翻譯語言（對方語言）",
+            text="請選擇對方使用語言",
             quick_reply=QuickReply(
                 items=[
                     QuickReplyItem(
                         action=MessageAction(
-                            label="繁體中文", text="設定打字翻譯 " + "繁體中文"
+                            label="繁體中文", text="設定打字後翻譯為 " + "繁體中文"
                         )
                     ),
                     QuickReplyItem(
                         action=MessageAction(
-                            label="簡體中文", text="設定打字翻譯 " + "簡體中文"
+                            label="簡體中文", text="設定打字後翻譯為 " + "簡體中文"
                         )
                     ),
                     QuickReplyItem(
                         action=MessageAction(
-                            label="英文", text="設定打字翻譯 " + "英文"
+                            label="英文", text="設定打字後翻譯為 " + "英文"
                         )
                     ),
                     QuickReplyItem(
                         action=MessageAction(
-                            label="日文", text="設定打字翻譯 " + "日文"
+                            label="日文", text="設定打字後翻譯為 " + "日文"
                         )
                     ),
                     QuickReplyItem(
                         action=MessageAction(
-                            label="韓文", text="設定打字翻譯 " + "韓文"
+                            label="韓文", text="設定打字後翻譯為 " + "韓文"
                         )
                     ),
                     QuickReplyItem(
                         action=MessageAction(
-                            label="越南文", text="設定打字翻譯 " + "越南文"
+                            label="越南文", text="設定打字後翻譯為 " + "越南文"
                         )
                     ),
                     QuickReplyItem(
                         action=MessageAction(
-                            label="泰文", text="設定打字翻譯 " + "泰文"
+                            label="泰文", text="設定打字後翻譯為 " + "泰文"
                         )
                     ),
                     QuickReplyItem(
                         action=MessageAction(
-                            label="義大利文", text="設定打字翻譯 " + "義大利文"
+                            label="義大利文", text="設定打字後翻譯為 " + "義大利文"
                         )
                     ),
                     QuickReplyItem(
                         action=MessageAction(
-                            label="西班牙文", text="設定打字翻譯 " + "西班牙文"
+                            label="西班牙文", text="設定打字後翻譯為 " + "西班牙文"
                         )
                     ),
                     QuickReplyItem(
                         action=MessageAction(
-                            label="葡萄牙文", text="設定打字翻譯 " + "葡萄牙文"
+                            label="葡萄牙文", text="設定打字後翻譯為 " + "葡萄牙文"
                         )
                     ),
                     QuickReplyItem(
                         action=MessageAction(
-                            label="荷蘭文", text="設定打字翻譯 " + "荷蘭文"
+                            label="荷蘭文", text="設定打字後翻譯為 " + "荷蘭文"
                         )
                     ),
                     QuickReplyItem(
                         action=MessageAction(
-                            label="德文", text="設定打字翻譯 " + "德文"
+                            label="德文", text="設定打字後翻譯為 " + "德文"
                         )
                     ),
                     QuickReplyItem(
                         action=MessageAction(
-                            label="法文", text="設定打字翻譯 " + "法文"
+                            label="法文", text="設定打字後翻譯為 " + "法文"
                         )
                     ),
                 ]
@@ -271,7 +271,7 @@ def handle_text_message(event):
         )
         reply_message(event.reply_token, flex_message)
 
-    elif "設定打字翻譯" in user_input:
+    elif "設定打字後翻譯為" in user_input:
         # Set translate language by user
         user_dict[user_id][user_translate_language_key] = lang_dict[
             user_input.split(" ")[1]
