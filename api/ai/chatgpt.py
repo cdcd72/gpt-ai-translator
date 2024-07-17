@@ -1,29 +1,34 @@
 import os
-import openai
+from openai import OpenAI
 
 from dotenv import load_dotenv
 
 load_dotenv()
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 
 class ChatGPT:
     def __init__(self):
-        self.model = "gpt-3.5-turbo"
-        self.temperature = 0.5
+        self.model = "gpt-4o"
+        self.temperature = 0.2
 
     def whisper(self, audio_path):
-        audio_file = open(audio_path, "rb")
-        transcript = openai.Audio.transcribe("whisper-1", audio_file)
-        return transcript["text"]
+        with open(audio_path, "rb") as audio_file:
+            transcript = client.audio.transcriptions.create(
+                model="whisper-1", file=audio_file
+            )
+        return transcript.text
 
     def translate(self, text, language):
-        prompt = f"""{text}
+        prompt = f"""
 Help me translate this sentence to {language}, only target language, no need original language."""
-        response = openai.ChatCompletion.create(
+        response = client.chat.completions.create(
             model=self.model,
-            messages=[{"role": "user", "content": prompt}],
+            messages=[
+                {"role": "system", "content": prompt},
+                {"role": "user", "content": text},
+            ],
             temperature=self.temperature,
         )
-        return response["choices"][0]["message"]["content"]
+        return response.choices[0].message.content

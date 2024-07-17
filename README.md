@@ -27,10 +27,10 @@ Using Flask, OpenAI whisper API, GPT3.5 API to develop line language translator.
 | 韓文     | Korean              |
 | 越南文   | Vietnamese          |
 | 泰文     | Thai                |
+| 印尼文   | Indonesian          |
 | 義大利文 | Italian             |
 | 西班牙文 | Spanish             |
 | 葡萄牙文 | Portuguese          |
-| 荷蘭文   | Dutch               |
 | 德文     | German              |
 | 法文     | French              |
 
