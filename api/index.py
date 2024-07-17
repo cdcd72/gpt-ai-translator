@@ -10,8 +10,14 @@ from linebot.v3.messaging import (
     ApiClient,
     MessagingApi,
     MessagingApiBlob,
+    ShowLoadingAnimationRequest,
     ReplyMessageRequest,
+    PushMessageRequest,
     TextMessage,
+    AudioMessage,
+    QuickReply,
+    QuickReplyItem,
+    MessageAction,
 )
 from linebot.v3.webhooks import MessageEvent, TextMessageContent, AudioMessageContent
 from gtts import gTTS
@@ -112,71 +118,71 @@ def handle_text_message(event):
         init_user_lang(user_id)
     user_input = event.message.text
     if (user_input == "/setting") or (user_input == "設定"):
-        flex_message = TextSendMessage(
+        flex_message = TextMessage(
             text="請選擇語音辨識後的翻譯語言（我方語言）",
             quick_reply=QuickReply(
                 items=[
-                    QuickReplyButton(
+                    QuickReplyItem(
                         action=MessageAction(
                             label="繁體中文", text="設定辨識翻譯 " + "繁體中文"
                         )
                     ),
-                    QuickReplyButton(
+                    QuickReplyItem(
                         action=MessageAction(
                             label="簡體中文", text="設定辨識翻譯 " + "簡體中文"
                         )
                     ),
-                    QuickReplyButton(
+                    QuickReplyItem(
                         action=MessageAction(
                             label="英文", text="設定辨識翻譯 " + "英文"
                         )
                     ),
-                    QuickReplyButton(
+                    QuickReplyItem(
                         action=MessageAction(
                             label="日文", text="設定辨識翻譯 " + "日文"
                         )
                     ),
-                    QuickReplyButton(
+                    QuickReplyItem(
                         action=MessageAction(
                             label="韓文", text="設定辨識翻譯 " + "韓文"
                         )
                     ),
-                    QuickReplyButton(
+                    QuickReplyItem(
                         action=MessageAction(
                             label="越南文", text="設定辨識翻譯 " + "越南文"
                         )
                     ),
-                    QuickReplyButton(
+                    QuickReplyItem(
                         action=MessageAction(
                             label="泰文", text="設定辨識翻譯 " + "泰文"
                         )
                     ),
-                    QuickReplyButton(
+                    QuickReplyItem(
                         action=MessageAction(
                             label="義大利文", text="設定辨識翻譯 " + "義大利文"
                         )
                     ),
-                    QuickReplyButton(
+                    QuickReplyItem(
                         action=MessageAction(
                             label="西班牙文", text="設定辨識翻譯 " + "西班牙文"
                         )
                     ),
-                    QuickReplyButton(
+                    QuickReplyItem(
                         action=MessageAction(
                             label="葡萄牙文", text="設定辨識翻譯 " + "葡萄牙文"
                         )
                     ),
-                    QuickReplyButton(
+                    QuickReplyItem(
                         action=MessageAction(
                             label="荷蘭文", text="設定辨識翻譯 " + "荷蘭文"
                         )
                     ),
-                    QuickReplyButton(
+                    QuickReplyItem(
                         action=MessageAction(
                             label="德文", text="設定辨識翻譯 " + "德文"
                         )
                     ),
-                    QuickReplyButton(
+                    QuickReplyItem(
                         action=MessageAction(
                             label="法文", text="設定辨識翻譯 " + "法文"
                         )
@@ -184,78 +190,78 @@ def handle_text_message(event):
                 ]
             ),
         )
-        configuration.reply_message(event.reply_token, flex_message)
+        reply_message(event.reply_token, flex_message)
 
     elif "設定辨識翻譯" in user_input:
         # Set audio language by user
         user_dict[user_id][user_audio_language_key] = lang_dict[
             user_input.split(" ")[1]
         ]
-        flex_message = TextSendMessage(
+        flex_message = TextMessage(
             text="請選擇打字後的翻譯語言（對方語言）",
             quick_reply=QuickReply(
                 items=[
-                    QuickReplyButton(
+                    QuickReplyItem(
                         action=MessageAction(
                             label="繁體中文", text="設定打字翻譯 " + "繁體中文"
                         )
                     ),
-                    QuickReplyButton(
+                    QuickReplyItem(
                         action=MessageAction(
                             label="簡體中文", text="設定打字翻譯 " + "簡體中文"
                         )
                     ),
-                    QuickReplyButton(
+                    QuickReplyItem(
                         action=MessageAction(
                             label="英文", text="設定打字翻譯 " + "英文"
                         )
                     ),
-                    QuickReplyButton(
+                    QuickReplyItem(
                         action=MessageAction(
                             label="日文", text="設定打字翻譯 " + "日文"
                         )
                     ),
-                    QuickReplyButton(
+                    QuickReplyItem(
                         action=MessageAction(
                             label="韓文", text="設定打字翻譯 " + "韓文"
                         )
                     ),
-                    QuickReplyButton(
+                    QuickReplyItem(
                         action=MessageAction(
                             label="越南文", text="設定打字翻譯 " + "越南文"
                         )
                     ),
-                    QuickReplyButton(
+                    QuickReplyItem(
                         action=MessageAction(
                             label="泰文", text="設定打字翻譯 " + "泰文"
                         )
                     ),
-                    QuickReplyButton(
+                    QuickReplyItem(
                         action=MessageAction(
                             label="義大利文", text="設定打字翻譯 " + "義大利文"
                         )
                     ),
-                    QuickReplyButton(
+                    QuickReplyItem(
                         action=MessageAction(
                             label="西班牙文", text="設定打字翻譯 " + "西班牙文"
                         )
                     ),
-                    QuickReplyButton(
+                    QuickReplyItem(
                         action=MessageAction(
                             label="葡萄牙文", text="設定打字翻譯 " + "葡萄牙文"
                         )
                     ),
-                    QuickReplyButton(
+                    QuickReplyItem(
                         action=MessageAction(
                             label="荷蘭文", text="設定打字翻譯 " + "荷蘭文"
                         )
                     ),
-                    QuickReplyButton(
+                    QuickReplyItem(
                         action=MessageAction(
                             label="德文", text="設定打字翻譯 " + "德文"
                         )
                     ),
-                    QuickReplyButton(
+                    QuickReplyItem(
                         action=MessageAction(
                             label="法文", text="設定打字翻譯 " + "法文"
                         )
@@ -263,7 +269,7 @@ def handle_text_message(event):
                 ]
             ),
         )
-        configuration.reply_message(event.reply_token, flex_message)
+        reply_message(event.reply_token, flex_message)
 
     elif "設定打字翻譯" in user_input:
         # Set translate language by user
@@ -276,9 +282,7 @@ def handle_text_message(event):
         response_text = f"""設定完畢！
 我方語言：{reverse_lang_dict[audio_language]}（{audio_language}）
 對方語言：{reverse_lang_dict[translate_language]}（{translate_language}）"""
-        configuration.reply_message(
-            event.reply_token, TextSendMessage(text=response_text)
-        )
+        reply_message(event.reply_token, TextMessage(text=response_text))
 
     elif (user_input == "/current-setting") or (user_input == "目前設定"):
         # Format response message
@@ -286,29 +290,28 @@ def handle_text_message(event):
         translate_language = user_dict[user_id][user_translate_language_key]
         response_text = f"""我方語言：{reverse_lang_dict[audio_language]}（{audio_language}）
 對方語言：{reverse_lang_dict[translate_language]}（{translate_language}）"""
-        configuration.reply_message(
-            event.reply_token, TextSendMessage(text=response_text)
-        )
+        reply_message(event.reply_token, TextMessage(text=response_text))
 
     else:
-        # Translate result from user input
+        # Show loading animation
+        show_loading_animation(user_id)
+        # Translate text from user input
         translated_text = chatgpt.translate(
             user_input, user_dict[user_id][user_translate_language_key]
         )
-        configuration.reply_message(
-            event.reply_token, TextSendMessage(text=translated_text)
-        )
+        # Reply translated text
+        reply_message(event.reply_token, TextMessage(text=translated_text))
         if push_translated_text_audio_enabled:
             translated_text_audio_path = os.path.join(
                 app.config.get("AUDIO_TEMP_PATH"), f"{event.message.id}.m4a"
             )
-            # Translated result to audio file
+            # Convert translated text to audio file
             tts = gTTS(
                 translated_text,
                 lang=ietf_lang_dict[user_dict[user_id][user_translate_language_key]],
             )
             tts.save(translated_text_audio_path)
-            # Operate audio file with minio
+            # Operate audio file with remote storage
             clean_audios(user_id)
             upload_audio(user_id, translated_text_audio_path)
             translated_text_audio_url = get_audio_url(
@@ -317,11 +320,12 @@ def handle_text_message(event):
             translated_text_audio_duration = (
                 get_audio_duration(translated_text_audio_path) * 1000
             )
-            configuration.push_message(
+            # Push audio message from audio file
+            push_message(
                 user_id,
-                AudioSendMessage(
-                    original_content_url=translated_text_audio_url,
-                    duration=translated_text_audio_duration,
+                AudioMessage(
+                    originalContentUrl=translated_text_audio_url,
+                    duration=int(translated_text_audio_duration),
                 ),
             )
 
@@ -331,16 +335,19 @@ def handle_audio_message(event):
     user_id = event.source.user_id
     if not (user_exists(user_id)):
         init_user_lang(user_id)
-    # Read voice message for whisper api input
-    user_audio_path = write_user_audio(event.message.id)
+    # Show loading animation
+    show_loading_animation(user_id)
+    # Read audio message for whisper api input
+    user_audio_path = write_audio_message(event.message.id)
     whispered_text = chatgpt.whisper(user_audio_path)
     if os.path.exists(user_audio_path):
         os.remove(user_audio_path)
-    # Translate result from whisper api output
+    # Translate text from whisper api output
     translated_text = chatgpt.translate(
         whispered_text, user_dict[user_id][user_audio_language_key]
     )
-    reply_message(event.reply_token, translated_text)
+    # Reply translated text
+    reply_message(event.reply_token, TextMessage(text=translated_text))
 
 
 def user_exists(user_id):
@@ -379,24 +386,38 @@ def get_audio_duration(audio_path):
     return ffmpeg.probe(audio_path)["format"]["duration"]
 
 
-def write_user_audio(message_id):
-    user_audio_path = os.path.join(
-        app.config.get("AUDIO_TEMP_PATH"), f"{message_id}.m4a"
-    )
+def show_loading_animation(chat_id):
+    with ApiClient(configuration) as api_client:
+        line_bot_api = MessagingApi(api_client)
+        line_bot_api.show_loading_animation(
+            ShowLoadingAnimationRequest(chatId=chat_id, loadingSeconds=60),
+        )
+
+
+def write_audio_message(message_id):
+    audio_path = os.path.join(app.config.get("AUDIO_TEMP_PATH"), f"{message_id}.m4a")
     with ApiClient(configuration) as api_client:
         line_bot_blob_api = MessagingApiBlob(api_client)
-        with open(user_audio_path, "wb") as audio_file:
-            audio_file.write(line_bot_blob_api.get_message_content(message_id))
-    return user_audio_path
+        with open(audio_path, "wb") as audio_file:
+            audio_file.write(
+                line_bot_blob_api.get_message_content(message_id=message_id)
+            )
+    return audio_path
 
 
 def reply_message(reply_token, message):
     with ApiClient(configuration) as api_client:
         line_bot_api = MessagingApi(api_client)
-        line_bot_api.reply_message_with_http_info(
-            ReplyMessageRequest(
-                reply_token=reply_token, messages=[TextMessage(text=message)]
-            )
+        line_bot_api.reply_message(
+            ReplyMessageRequest(reply_token=reply_token, messages=[message]),
+        )
+
+
+def push_message(chat_id, message):
+    with ApiClient(configuration) as api_client:
+        line_bot_api = MessagingApi(api_client)
+        line_bot_api.push_message(
+            PushMessageRequest(to=chat_id, messages=[message]),
         )
 
 
