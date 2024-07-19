@@ -1,7 +1,7 @@
 # gpt-ai-translator
 
-使用 Flask、OpenAI whisper API、GPT3.5 API 來開發語言翻譯 Line 機器人。  
-Using Flask, OpenAI whisper API, GPT3.5 API to develop line language translator.
+使用 Flask、OpenAI whisper API、GPT-4o-mini API 來開發語言翻譯 Line 機器人。  
+Using Flask, OpenAI whisper API, GPT-4o-mini API to develop line language translator.
 
 ## 使用案例
 
@@ -45,6 +45,8 @@ Using Flask, OpenAI whisper API, GPT3.5 API to develop line language translator.
 | LINE_CHANNEL_ACCESS_TOKEN              | null              | LINE 的 channel access token                                                                                           |
 | LINE_CHANNEL_SECRET                    | null              | LINE 的 channel secret                                                                                                 |
 | OPENAI_API_KEY                         | null              | OpenAI 的 API key                                                                                                      |
+| OPENAI_COMPLETION_MODEL                | gpt-4o-mini       | OpenAI 的交談模型                                                                                                      |
+| OPENAI_COMPLETION_TEMPERATURE          | 0.2               | OpenAI 的模型溫度                                                                                                      |
 | MINIO_ENDPOINT                         | null              | Minio 的 endpoint                                                                                                      |
 | MINIO_ACCESS_KEY                       | null              | Minio 的 access key                                                                                                    |
 | MINIO_SECRET_KEY                       | null              | Minio 的 secret key                                                                                                    |
