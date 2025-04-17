@@ -10,7 +10,7 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 class ChatGPT:
     def __init__(self):
-        self.model = os.getenv("OPENAI_COMPLETION_MODEL", "gpt-4o-mini")
+        self.model = os.getenv("OPENAI_COMPLETION_MODEL", "gpt-4.1-mini")
         self.temperature = float(os.getenv("OPENAI_COMPLETION_TEMPERATURE", "0.2"))
 
     def whisper(self, audio_path):
