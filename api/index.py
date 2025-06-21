@@ -65,22 +65,6 @@ lang_dict = {
     "法文": "French",
 }
 reverse_lang_dict = {value: key for key, value in lang_dict.items()}
-# IETF language tag
-ietf_lang_dict = {
-    "Traditional Chinese": "zh-TW",
-    "Simplified Chinese": "zh-CN",
-    "English": "en",
-    "Japanese": "ja",
-    "Korean": "ko",
-    "Vietnamese": "vi",
-    "Thai": "th",
-    "Indonesian": "id",
-    "Italian": "it",
-    "Spanish": "es",
-    "Portuguese": "pt",
-    "German": "de",
-    "French": "fr",
-}
 
 # endregion
 
