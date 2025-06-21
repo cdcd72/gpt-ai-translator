@@ -20,11 +20,10 @@ from linebot.v3.messaging import (
     MessageAction,
 )
 from linebot.v3.webhooks import MessageEvent, TextMessageContent, AudioMessageContent
-from gtts import gTTS
 from api.ai.chatgpt import ChatGPT
 from api.config.configs import *
 from api.storage.minio import MinioStorage
-from api.media.ffmpeg import FFmpeg
+from api.media.tinytag import TinyTagMedia
 
 load_dotenv()
 
@@ -46,7 +45,7 @@ push_translated_text_audio_enabled = (
 
 chatgpt = ChatGPT()
 minio_storage = MinioStorage() if push_translated_text_audio_enabled else None
-ffmpeg = FFmpeg() if push_translated_text_audio_enabled else None
+tinytag_media = TinyTagMedia() if push_translated_text_audio_enabled else None
 
 # region Language related
 
@@ -303,14 +302,10 @@ def handle_text_message(event):
         reply_message(event.reply_token, TextMessage(text=translated_text))
         if push_translated_text_audio_enabled:
             translated_text_audio_path = os.path.join(
-                app.config.get("AUDIO_TEMP_PATH"), f"{event.message.id}.m4a"
+                app.config.get("AUDIO_TEMP_PATH"), f"{event.message.id}.mp3"
             )
             # Convert translated text to audio file
-            tts = gTTS(
-                translated_text,
-                lang=ietf_lang_dict[user_dict[user_id][user_translate_language_key]],
-            )
-            tts.save(translated_text_audio_path)
+            chatgpt.tts(translated_text, translated_text_audio_path)
             # Operate audio file with remote storage
             clean_audios(user_id)
             upload_audio(user_id, translated_text_audio_path)
@@ -383,7 +378,7 @@ def get_audio_url(user_id, audio_path):
 
 
 def get_audio_duration(audio_path):
-    return ffmpeg.probe(audio_path)["format"]["duration"]
+    return tinytag_media.get_audio_duration(audio_path)
 
 
 def show_loading_animation(chat_id):
