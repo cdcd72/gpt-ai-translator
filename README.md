@@ -38,20 +38,22 @@ Using Flask, OpenAI whisper API, GPT-4.1-mini API to develop line language trans
 
 #### 環境變數
 
-| 名稱                                   | 預設值            | 說明                                                                                                                   |
-| -------------------------------------- | ----------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| APP_ENVIRONMENT                        | VERCEL            | 執行環境                                                                                                               |
-| APP_PUSH_TRANSLATED_TEXT_AUDIO_ENABLED | false             | 是否可以對取得的翻譯結果多推送一則語音訊息（該功能須依賴 Minio 及 [ffmpeg-api](https://github.com/cdcd72/ffmpeg-api)） |
-| LINE_CHANNEL_ACCESS_TOKEN              | null              | LINE 的 channel access token                                                                                           |
-| LINE_CHANNEL_SECRET                    | null              | LINE 的 channel secret                                                                                                 |
-| OPENAI_API_KEY                         | null              | OpenAI 的 API key                                                                                                      |
-| OPENAI_COMPLETION_MODEL                | gpt-4.1-mini      | OpenAI 的交談模型                                                                                                      |
-| OPENAI_COMPLETION_TEMPERATURE          | 0.2               | OpenAI 的模型溫度                                                                                                      |
-| MINIO_ENDPOINT                         | null              | Minio 的 endpoint                                                                                                      |
-| MINIO_ACCESS_KEY                       | null              | Minio 的 access key                                                                                                    |
-| MINIO_SECRET_KEY                       | null              | Minio 的 secret key                                                                                                    |
-| MINIO_BUCKET                           | gpt-ai-translator | Minio 的 bucket 名稱                                                                                                   |
-| FFMPEG_API_ENDPOINT                    | null              | ffmpeg-api 的 endpoint                                                                                                 |
+| 名稱                                   | 預設值            | 說明                                                             |
+| -------------------------------------- | ----------------- | ---------------------------------------------------------------- |
+| APP_ENVIRONMENT                        | VERCEL            | 執行環境                                                         |
+| APP_PUSH_TRANSLATED_TEXT_AUDIO_ENABLED | false             | 是否可以對取得的翻譯結果多推送一則語音訊息（該功能須依賴 Minio） |
+| LINE_CHANNEL_ACCESS_TOKEN              | null              | LINE 的 channel access token                                     |
+| LINE_CHANNEL_SECRET                    | null              | LINE 的 channel secret                                           |
+| OPENAI_API_KEY                         | null              | OpenAI 的 API key                                                |
+| OPENAI_COMPLETION_MODEL                | gpt-4.1-mini      | OpenAI 的交談模型                                                |
+| OPENAI_COMPLETION_TEMPERATURE          | 0.2               | OpenAI 的交談模型溫度                                            |
+| OPENAI_TTS_MODEL                       | gpt-4o-mini-tts   | OpenAI 的文字轉語音模型                                          |
+| OPENAI_TTS_VOICE                       | alloy             | OpenAI 的文字轉語音聲音                                          |
+| OPENAI_WHISPER_MODEL                   | whisper-1         | OpenAI 的語音轉文字模型                                          |
+| MINIO_ENDPOINT                         | null              | Minio 的 endpoint                                                |
+| MINIO_ACCESS_KEY                       | null              | Minio 的 access key                                              |
+| MINIO_SECRET_KEY                       | null              | Minio 的 secret key                                              |
+| MINIO_BUCKET                           | gpt-ai-translator | Minio 的 bucket 名稱                                             |
 
 #### 部署至 Vercel
 
@@ -65,11 +67,11 @@ Using Flask, OpenAI whisper API, GPT-4.1-mini API to develop line language trans
 # from api.ai.chatgpt import ChatGPT
 # from api.config.configs import *
 # from api.storage.minio import MinioStorage
-# from api.media.ffmpeg import FFmpeg
+# from api.media.tinytag import TinyTagMedia
 from ai.chatgpt import ChatGPT
 from config.configs import *
 from storage.minio import MinioStorage
-from media.ffmpeg import FFmpeg
+from media.tinytag import TinyTagMedia
 ```
 
 #### 依據 .env.example 格式並在根目錄新增 .env
