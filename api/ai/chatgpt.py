@@ -17,17 +17,14 @@ class ChatGPT:
         self.whisper_model = os.getenv("OPENAI_WHISPER_MODEL", "whisper-1")
 
     def translate(self, text, language):
-        prompt = f"""
-Help me translate this sentence to {language}, only target language, no need original language."""
-        response = client.chat.completions.create(
+        prompt = f"""Translate the provided sentence into the {language}, outputting only the translation."""
+        response = client.responses.create(
             model=self.model,
-            messages=[
-                {"role": "system", "content": prompt},
-                {"role": "user", "content": text},
-            ],
+            instructions=prompt,
+            input=text,
             temperature=self.temperature,
         )
-        return response.choices[0].message.content
+        return response.output_text
 
     def tts(self, text, audio_path):
         with client.audio.speech.with_streaming_response.create(
