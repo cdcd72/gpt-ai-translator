@@ -10,24 +10,21 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 class ChatGPT:
     def __init__(self):
-        self.model = os.getenv("OPENAI_COMPLETION_MODEL", "gpt-4.1-mini")
-        self.temperature = float(os.getenv("OPENAI_COMPLETION_TEMPERATURE", "0.2"))
+        self.model = os.getenv("OPENAI_COMPLETION_MODEL", "gpt-5-nano")
+        self.temperature = float(os.getenv("OPENAI_COMPLETION_TEMPERATURE", "1.0"))
         self.tts_model = os.getenv("OPENAI_TTS_MODEL", "gpt-4o-mini-tts")
         self.tts_voice = os.getenv("OPENAI_TTS_VOICE", "alloy")
         self.whisper_model = os.getenv("OPENAI_WHISPER_MODEL", "whisper-1")
 
     def translate(self, text, language):
-        prompt = f"""
-Help me translate this sentence to {language}, only target language, no need original language."""
-        response = client.chat.completions.create(
+        prompt = f"""Translate the provided sentence into the {language}, outputting only the translation."""
+        response = client.responses.create(
             model=self.model,
-            messages=[
-                {"role": "system", "content": prompt},
-                {"role": "user", "content": text},
-            ],
+            instructions=prompt,
+            input=text,
             temperature=self.temperature,
         )
-        return response.choices[0].message.content
+        return response.output_text
 
     def tts(self, text, audio_path):
         with client.audio.speech.with_streaming_response.create(
