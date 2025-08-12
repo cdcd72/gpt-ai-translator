@@ -22,6 +22,7 @@ from linebot.v3.messaging import (
 from linebot.v3.webhooks import MessageEvent, TextMessageContent, AudioMessageContent
 from api.ai.chatgpt import ChatGPT
 from api.config.configs import *
+from api.storage.cache import LRUConfig, MultiTierCacheAdapter
 from api.storage.minio import MinioStorage
 from api.media.tinytag import TinyTagMedia
 
@@ -73,7 +74,7 @@ reverse_lang_dict = {value: key for key, value in lang_dict.items()}
 user_translate_language_key = "translate_language"
 user_audio_language_key = "audio_language"
 
-user_settings = {}
+user_settings_cache = MultiTierCacheAdapter(lru_config=LRUConfig(maxsize=100))
 
 # endregion
 
@@ -177,9 +178,9 @@ def handle_text_message(event):
 
     elif "設定語音辨識後翻譯為" in user_input:
         # Set audio language by user
-        user_settings[user_id][user_audio_language_key] = lang_dict[
-            user_input.split(" ")[1]
-        ]
+        update_user_settings(
+            user_id, {user_audio_language_key: lang_dict[user_input.split(" ")[1]]}
+        )
         flex_message = TextMessage(
             text="請選擇對方使用語言",
             quick_reply=QuickReply(
@@ -256,12 +257,13 @@ def handle_text_message(event):
 
     elif "設定打字後翻譯為" in user_input:
         # Set translate language by user
-        user_settings[user_id][user_translate_language_key] = lang_dict[
-            user_input.split(" ")[1]
-        ]
+        update_user_settings(
+            user_id, {user_translate_language_key: lang_dict[user_input.split(" ")[1]]}
+        )
         # Format response message
-        audio_language = user_settings[user_id][user_audio_language_key]
-        translate_language = user_settings[user_id][user_translate_language_key]
+        user_settings = get_user_settings(user_id)
+        audio_language = user_settings[user_audio_language_key]
+        translate_language = user_settings[user_translate_language_key]
         response_text = f"""設定完畢！
 我方語言：{reverse_lang_dict[audio_language]}（{audio_language}）
 對方語言：{reverse_lang_dict[translate_language]}（{translate_language}）"""
@@ -269,8 +271,9 @@ def handle_text_message(event):
 
     elif (user_input == "/current-setting") or (user_input == "目前設定"):
         # Format response message
-        audio_language = user_settings[user_id][user_audio_language_key]
-        translate_language = user_settings[user_id][user_translate_language_key]
+        user_settings = get_user_settings(user_id)
+        audio_language = user_settings[user_audio_language_key]
+        translate_language = user_settings[user_translate_language_key]
         response_text = f"""我方語言：{reverse_lang_dict[audio_language]}（{audio_language}）
 對方語言：{reverse_lang_dict[translate_language]}（{translate_language}）"""
         reply_message(event.reply_token, TextMessage(text=response_text))
@@ -279,8 +282,9 @@ def handle_text_message(event):
         # Show loading animation
         show_loading_animation(user_id)
         # Translate text from user input
+        user_settings = get_user_settings(user_id)
         translated_text = chatgpt.translate(
-            user_input, user_settings[user_id][user_translate_language_key]
+            user_input, user_settings[user_translate_language_key]
         )
         # Reply translated text
         reply_message(event.reply_token, TextMessage(text=translated_text))
@@ -322,22 +326,36 @@ def handle_audio_message(event):
     if os.path.exists(user_audio_path):
         os.remove(user_audio_path)
     # Translate text from whisper api output
+    user_settings = get_user_settings(user_id)
     translated_text = chatgpt.translate(
-        whispered_text, user_settings[user_id][user_audio_language_key]
+        whispered_text, user_settings[user_audio_language_key]
     )
     # Reply translated text
     reply_message(event.reply_token, TextMessage(text=translated_text))
 
 
 def user_exists(user_id):
-    return user_id in user_settings
+    return get_user_settings(user_id) != {}
 
 
 def init_user_lang(user_id):
-    user_settings[user_id] = {
-        user_translate_language_key: "English",
-        user_audio_language_key: "Traditional Chinese",
-    }
+    update_user_settings(
+        user_id,
+        {
+            user_translate_language_key: "English",
+            user_audio_language_key: "Traditional Chinese",
+        },
+    )
+
+
+def update_user_settings(user_id, settings):
+    current_settings = get_user_settings(user_id)
+    updated_settings = {**current_settings, **settings}
+    user_settings_cache.set(user_id, updated_settings)
+
+
+def get_user_settings(user_id):
+    return user_settings_cache.get(user_id) or {}
 
 
 def clean_audios(user_id):
