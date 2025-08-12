@@ -73,7 +73,7 @@ reverse_lang_dict = {value: key for key, value in lang_dict.items()}
 user_translate_language_key = "translate_language"
 user_audio_language_key = "audio_language"
 
-user_dict = {}
+user_settings = {}
 
 # endregion
 
@@ -177,7 +177,7 @@ def handle_text_message(event):
 
     elif "設定語音辨識後翻譯為" in user_input:
         # Set audio language by user
-        user_dict[user_id][user_audio_language_key] = lang_dict[
+        user_settings[user_id][user_audio_language_key] = lang_dict[
             user_input.split(" ")[1]
         ]
         flex_message = TextMessage(
@@ -256,12 +256,12 @@ def handle_text_message(event):
 
     elif "設定打字後翻譯為" in user_input:
         # Set translate language by user
-        user_dict[user_id][user_translate_language_key] = lang_dict[
+        user_settings[user_id][user_translate_language_key] = lang_dict[
             user_input.split(" ")[1]
         ]
         # Format response message
-        audio_language = user_dict[user_id][user_audio_language_key]
-        translate_language = user_dict[user_id][user_translate_language_key]
+        audio_language = user_settings[user_id][user_audio_language_key]
+        translate_language = user_settings[user_id][user_translate_language_key]
         response_text = f"""設定完畢！
 我方語言：{reverse_lang_dict[audio_language]}（{audio_language}）
 對方語言：{reverse_lang_dict[translate_language]}（{translate_language}）"""
@@ -269,8 +269,8 @@ def handle_text_message(event):
 
     elif (user_input == "/current-setting") or (user_input == "目前設定"):
         # Format response message
-        audio_language = user_dict[user_id][user_audio_language_key]
-        translate_language = user_dict[user_id][user_translate_language_key]
+        audio_language = user_settings[user_id][user_audio_language_key]
+        translate_language = user_settings[user_id][user_translate_language_key]
         response_text = f"""我方語言：{reverse_lang_dict[audio_language]}（{audio_language}）
 對方語言：{reverse_lang_dict[translate_language]}（{translate_language}）"""
         reply_message(event.reply_token, TextMessage(text=response_text))
@@ -280,7 +280,7 @@ def handle_text_message(event):
         show_loading_animation(user_id)
         # Translate text from user input
         translated_text = chatgpt.translate(
-            user_input, user_dict[user_id][user_translate_language_key]
+            user_input, user_settings[user_id][user_translate_language_key]
         )
         # Reply translated text
         reply_message(event.reply_token, TextMessage(text=translated_text))
@@ -323,18 +323,18 @@ def handle_audio_message(event):
         os.remove(user_audio_path)
     # Translate text from whisper api output
     translated_text = chatgpt.translate(
-        whispered_text, user_dict[user_id][user_audio_language_key]
+        whispered_text, user_settings[user_id][user_audio_language_key]
     )
     # Reply translated text
     reply_message(event.reply_token, TextMessage(text=translated_text))
 
 
 def user_exists(user_id):
-    return user_id in user_dict
+    return user_id in user_settings
 
 
 def init_user_lang(user_id):
-    user_dict[user_id] = {
+    user_settings[user_id] = {
         user_translate_language_key: "English",
         user_audio_language_key: "Traditional Chinese",
     }
