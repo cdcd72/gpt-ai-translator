@@ -22,7 +22,7 @@ from linebot.v3.messaging import (
 from linebot.v3.webhooks import MessageEvent, TextMessageContent, AudioMessageContent
 from api.ai.chatgpt import ChatGPT
 from api.config.configs import *
-from api.storage.cache import LRUConfig, MultiTierCacheAdapter
+from api.storage.cache import MultiTierCacheAdapter
 from api.storage.minio import MinioStorage
 from api.media.tinytag import TinyTagMedia
 
@@ -74,7 +74,7 @@ reverse_lang_dict = {value: key for key, value in lang_dict.items()}
 user_translate_language_key = "translate_language"
 user_audio_language_key = "audio_language"
 
-user_settings_cache = MultiTierCacheAdapter(lru_config=LRUConfig(maxsize=100))
+user_settings_cache = MultiTierCacheAdapter()
 
 # endregion
 

@@ -1,10 +1,6 @@
-from typing import Optional
+import os
+
 from cachetools import LRUCache
-
-
-class LRUConfig:
-    def __init__(self, maxsize: float):
-        self.maxsize = maxsize
 
 
 class LRUWrapper:
@@ -22,8 +18,8 @@ class LRUWrapper:
 
 
 class MultiTierCacheAdapter:
-    def __init__(self, lru_config: Optional[LRUConfig] = None):
-        self.local = LRUWrapper(maxsize=lru_config.maxsize) if lru_config else None
+    def __init__(self):
+        self.local = LRUWrapper(maxsize=float(os.getenv("LRU_CACHE_SIZE", "100")))
         # self.remote = remote_cache
 
     def get(self, key):
