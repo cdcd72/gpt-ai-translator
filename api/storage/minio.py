@@ -1,14 +1,11 @@
-import os
-
 from dataclasses import dataclass
-from dotenv import load_dotenv
+from config.base import BaseConfig
+from typing import Optional
 from minio import Minio
-
-load_dotenv()
 
 
 @dataclass
-class MinioConfig:
+class MinioConfig(BaseConfig):
     endpoint: str
     access_key: str
     secret_key: str
@@ -17,21 +14,22 @@ class MinioConfig:
     @classmethod
     def from_env(cls) -> "MinioConfig":
         return cls(
-            endpoint=os.getenv("MINIO_ENDPOINT"),
-            access_key=os.getenv("MINIO_ACCESS_KEY"),
-            secret_key=os.getenv("MINIO_SECRET_KEY"),
-            bucket_name=os.getenv("MINIO_BUCKET"),
+            endpoint=cls.get_required("MINIO_ENDPOINT"),
+            access_key=cls.get_required("MINIO_ACCESS_KEY"),
+            secret_key=cls.get_required("MINIO_SECRET_KEY"),
+            bucket_name=cls.get_str("MINIO_BUCKET"),
         )
 
 
 class MinioStorage:
-    def __init__(self, config: MinioConfig = MinioConfig.from_env()):
+    def __init__(self, config: Optional[MinioConfig] = None):
+        self.config = config or MinioConfig.from_env()
         self.client = Minio(
-            config.endpoint,
-            access_key=config.access_key,
-            secret_key=config.secret_key,
+            self.config.endpoint,
+            access_key=self.config.access_key,
+            secret_key=self.config.secret_key,
         )
-        self.bucket_name = config.bucket_name
+        self.bucket_name = self.config.bucket_name
 
     def clean_files(self, bucket_name, prefix, recursive):
         bucket_name = self.resolve_bucket_name(bucket_name)

@@ -1,6 +1,5 @@
 import os
 import hashlib
-
 from dotenv import load_dotenv
 from flask import Flask, request, abort
 from linebot.v3 import WebhookHandler
