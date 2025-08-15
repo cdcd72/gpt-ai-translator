@@ -25,10 +25,21 @@ class LineConfig(BaseConfig):
             channel_secret=cls.get_required("LINE_CHANNEL_SECRET"),
         )
 
+    @classmethod
+    def merge(
+        cls, base: "LineConfig", override: Optional["LineConfig"]
+    ) -> "LineConfig":
+        if override is None:
+            return base
+        return cls(
+            access_token=override.access_token or base.access_token,
+            channel_secret=override.channel_secret or base.channel_secret,
+        )
+
 
 class Line:
     def __init__(self, config: Optional[LineConfig] = None):
-        self.config = config or LineConfig.from_env()
+        self.config = LineConfig.merge(base=LineConfig.from_env(), override=config)
         self.configuration = Configuration(access_token=self.config.access_token)
         self.handler = WebhookHandler(self.config.channel_secret)
 

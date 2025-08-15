@@ -20,10 +20,23 @@ class MinioConfig(BaseConfig):
             bucket_name=cls.get_str("MINIO_BUCKET"),
         )
 
+    @classmethod
+    def merge(
+        cls, base: "MinioConfig", override: Optional["MinioConfig"]
+    ) -> "MinioConfig":
+        if override is None:
+            return base
+        return cls(
+            endpoint=override.endpoint or base.endpoint,
+            access_key=override.access_key or base.access_key,
+            secret_key=override.secret_key or base.secret_key,
+            bucket_name=override.bucket_name or base.bucket_name,
+        )
+
 
 class MinioStorage:
     def __init__(self, config: Optional[MinioConfig] = None):
-        self.config = config or MinioConfig.from_env()
+        self.config = MinioConfig.merge(base=MinioConfig.from_env(), override=config)
         self.client = Minio(
             self.config.endpoint,
             access_key=self.config.access_key,

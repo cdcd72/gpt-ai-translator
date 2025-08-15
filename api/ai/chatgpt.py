@@ -24,10 +24,25 @@ class OpenAIConfig(BaseConfig):
             whisper_model=cls.get_str("OPENAI_WHISPER_MODEL", "whisper-1"),
         )
 
+    @classmethod
+    def merge(
+        cls, base: "OpenAIConfig", override: Optional["OpenAIConfig"]
+    ) -> "OpenAIConfig":
+        if override is None:
+            return base
+        return cls(
+            api_key=override.api_key or base.api_key,
+            model=override.model or base.model,
+            temperature=override.temperature or base.temperature,
+            tts_model=override.tts_model or base.tts_model,
+            tts_voice=override.tts_voice or base.tts_voice,
+            whisper_model=override.whisper_model or base.whisper_model,
+        )
+
 
 class ChatGPT:
     def __init__(self, config: Optional[OpenAIConfig] = None):
-        self.config = config or OpenAIConfig.from_env()
+        self.config = OpenAIConfig.merge(base=OpenAIConfig.from_env(), override=config)
         self.client = OpenAI(api_key=self.config.api_key)
 
     def translate(self, text: str, language: str) -> str:
