@@ -31,21 +31,23 @@ class MinioStorage:
         )
         self.bucket_name = self.config.bucket_name
 
-    def clean_files(self, bucket_name, prefix, recursive):
+    def clean_files(
+        self, bucket_name: str, prefix: str, recursive: bool = True
+    ) -> None:
         bucket_name = self.resolve_bucket_name(bucket_name)
         objects = self.client.list_objects(bucket_name, prefix, recursive)
         for object in objects:
             self.client.remove_object(bucket_name, object.object_name)
 
-    def upload_file(self, bucket_name, object_name, file_path):
+    def upload_file(self, bucket_name: str, object_name: str, file_path: str) -> None:
         bucket_name = self.resolve_bucket_name(bucket_name)
         if not self.client.bucket_exists(bucket_name):
             self.client.make_bucket(bucket_name)
         self.client.fput_object(bucket_name, object_name, file_path)
 
-    def get_file_url(self, bucket_name, object_name):
+    def get_file_url(self, bucket_name: str, object_name: str) -> str:
         bucket_name = self.resolve_bucket_name(bucket_name)
         return self.client.presigned_get_object(bucket_name, object_name)
 
-    def resolve_bucket_name(self, bucket_name):
+    def resolve_bucket_name(self, bucket_name: str) -> str:
         return self.bucket_name or bucket_name

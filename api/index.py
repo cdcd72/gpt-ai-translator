@@ -359,7 +359,7 @@ def get_user_settings(user_id):
 
 def clean_audios(user_id):
     minio_storage.clean_files(
-        "gpt-ai-translator", hashlib.sha256(user_id.encode()).hexdigest(), True
+        "gpt-ai-translator", hashlib.sha256(user_id.encode()).hexdigest()
     )
 
 
