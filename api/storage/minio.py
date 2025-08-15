@@ -9,7 +9,7 @@ class MinioConfig(BaseConfig):
     endpoint: str
     access_key: str
     secret_key: str
-    bucket_name: str
+    bucket_name: str = None
 
     @classmethod
     def from_env(cls) -> "MinioConfig":

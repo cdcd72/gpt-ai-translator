@@ -13,24 +13,30 @@ from linebot.v3.messaging import (
 from linebot.v3.webhooks import MessageEvent, TextMessageContent, AudioMessageContent
 from api.bot.line import Line
 from api.ai.chatgpt import ChatGPT
+from api.config.base import BaseConfig
 from api.config.configs import *
-from api.storage.cache import MultiTierCacheAdapter
+from api.storage.cache import CacheConfig, MultiTierCacheAdapter
 from api.storage.minio import MinioStorage
 from api.media.tinytag import TinyTagMedia
 
 load_dotenv()
 
 app = Flask(__name__)
-environment = Environment[os.getenv("APP_ENVIRONMENT", Environment.VERCEL.value)]
+environment = Environment[
+    BaseConfig.get_str("APP_ENVIRONMENT", Environment.VERCEL.value)
+]
 if environment == Environment.DEVELOPMENT:
     app.config.from_object(DevelopmentConfig)
 elif environment == Environment.PRODUCTION:
     app.config.from_object(ProductionConfig)
 elif environment == Environment.VERCEL:
     app.config.from_object(ProductionForVercelConfig)
-
-push_translated_text_audio_enabled = (
-    os.getenv("APP_PUSH_TRANSLATED_TEXT_AUDIO_ENABLED", "false") == "true"
+name = BaseConfig.get_str("APP_NAME", "gpt-ai-translator")
+persistent_user_settings_enabled = BaseConfig.get_bool(
+    "APP_PERSISTENT_USER_SETTINGS_ENABLED", False
+)
+push_translated_text_audio_enabled = BaseConfig.get_bool(
+    "APP_PUSH_TRANSLATED_TEXT_AUDIO_ENABLED", False
 )
 
 line = Line()
@@ -64,7 +70,9 @@ reverse_lang_dict = {value: key for key, value in lang_dict.items()}
 user_translate_language_key = "translate_language"
 user_audio_language_key = "audio_language"
 
-user_settings_cache = MultiTierCacheAdapter()
+user_settings_cache = MultiTierCacheAdapter(
+    CacheConfig(remote_cache_enabled=persistent_user_settings_enabled)
+)
 
 # endregion
 
@@ -343,32 +351,35 @@ def init_user_lang(user_id):
 
 
 def update_user_settings(user_id, settings):
-    current_settings = get_user_settings(user_id)
+    key = f"{name}.{user_id}.settings"
+    current_settings = user_settings_cache.get(key) or {}
     updated_settings = {**current_settings, **settings}
-    user_settings_cache.set(user_id, updated_settings)
+    user_settings_cache.set(key, updated_settings)
 
 
 def get_user_settings(user_id):
-    return user_settings_cache.get(user_id) or {}
+    key = f"{name}.{user_id}.settings"
+    return user_settings_cache.get(key) or {}
 
 
 def clean_audios(user_id):
-    minio_storage.clean_files(
-        "gpt-ai-translator", hashlib.sha256(user_id.encode()).hexdigest()
-    )
+    bucket_name = name
+    minio_storage.clean_files(bucket_name, hashlib.sha256(user_id.encode()).hexdigest())
 
 
 def upload_audio(user_id, audio_path):
+    bucket_name = name
     minio_storage.upload_file(
-        "gpt-ai-translator",
+        bucket_name,
         f"/{hashlib.sha256(user_id.encode()).hexdigest()}/{os.path.basename(audio_path)}",
         audio_path,
     )
 
 
 def get_audio_url(user_id, audio_path):
+    bucket_name = name
     return minio_storage.get_file_url(
-        "gpt-ai-translator",
+        bucket_name,
         f"/{hashlib.sha256(user_id.encode()).hexdigest()}/{os.path.basename(audio_path)}",
     )
 
