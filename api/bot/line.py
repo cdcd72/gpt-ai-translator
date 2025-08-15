@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from config.base import BaseConfig
-from typing import Optional
+from typing import Any, Optional
 from linebot.v3 import WebhookHandler
 from linebot.v3.messaging import (
     Configuration,
@@ -47,14 +47,14 @@ class Line:
                     messaging_blob_api.get_message_content(message_id=message_id)
                 )
 
-    def reply_message(self, reply_token: str, message) -> None:
+    def reply_message(self, reply_token: str, message: Any) -> None:
         with ApiClient(self.configuration) as api_client:
             messaging_api = MessagingApi(api_client)
             messaging_api.reply_message(
                 ReplyMessageRequest(reply_token=reply_token, messages=[message]),
             )
 
-    def push_message(self, chat_id: str, message) -> None:
+    def push_message(self, chat_id: str, message: Any) -> None:
         with ApiClient(self.configuration) as api_client:
             messaging_api = MessagingApi(api_client)
             messaging_api.push_message(
