@@ -1,6 +1,6 @@
 import json
 from dataclasses import dataclass
-from config.base import BaseConfig
+from api.config.base import BaseConfig
 from typing import Any, Optional
 from cachetools import LRUCache
 from upstash_redis import Redis

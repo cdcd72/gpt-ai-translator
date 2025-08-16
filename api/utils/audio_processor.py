@@ -1,7 +1,7 @@
 import os
 import hashlib
-from storage.minio import MinioStorage
-from media.tinytag import TinyTagMedia
+from api.storage.minio import MinioStorage
+from api.media.tinytag import TinyTagMedia
 
 
 class AudioProcessor:

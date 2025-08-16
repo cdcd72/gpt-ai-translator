@@ -1,4 +1,4 @@
-from storage.cache import MultiTierCacheAdapter
+from api.storage.cache import MultiTierCacheAdapter
 
 
 class UserSettingsManager:

@@ -1,7 +1,7 @@
 from flask import Flask
-from config.base import BaseConfig
-from config.env import *
-from config.key import ConfigKey
+from api.config.base import BaseConfig
+from api.config.env import *
+from api.config.key import ConfigKey
 
 
 class ConfigLoader:

@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from config.base import BaseConfig
+from api.config.base import BaseConfig
 from typing import Optional
 from openai import OpenAI
 

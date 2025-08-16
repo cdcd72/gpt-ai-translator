@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from config.base import BaseConfig
+from api.config.base import BaseConfig
 from typing import Any, Optional
 from linebot.v3 import WebhookHandler
 from linebot.v3.messaging import (

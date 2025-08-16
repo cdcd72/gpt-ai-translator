@@ -66,7 +66,7 @@ This project is a language translation chatbot for Line, built with Flask and in
 
 ## 如何偵錯
 
-#### 調整 api/index.py 部分程式碼以可以在本機測試
+#### 調整部分程式碼以可以在本機測試
 
 ```python
 # from api.ai.chatgpt import ChatGPT
