@@ -2,5 +2,7 @@ python-dotenv==1.1.1
 Flask==3.1.1
 line-bot-sdk==3.18.0
 openai==1.99.3
+cachetools==6.1.0
+upstash-redis==1.4.0
 minio==7.2.16
 tinytag==2.1.1

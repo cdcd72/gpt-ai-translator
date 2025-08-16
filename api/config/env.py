@@ -2,23 +2,23 @@ import os
 from enum import Enum
 
 
-class Config:
+class EnvironmentConfig:
     TESTING = False
 
 
-class DevelopmentConfig(Config):
+class DevelopmentConfig(EnvironmentConfig):
     ENV = "development"
     DEBUG = True
     AUDIO_TEMP_PATH = os.path.join("data", "audio")
 
 
-class ProductionConfig(Config):
+class ProductionConfig(EnvironmentConfig):
     ENV = "production"
     DEBUG = False
     AUDIO_TEMP_PATH = os.path.join("data", "audio")
 
 
-class ProductionForVercelConfig(Config):
+class ProductionForVercelConfig(EnvironmentConfig):
     ENV = "production"
     DEBUG = False
     AUDIO_TEMP_PATH = "/tmp"
